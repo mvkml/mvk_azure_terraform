@@ -1,0 +1,4 @@
+init
+plan
+apply
+destroy
