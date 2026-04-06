@@ -197,3 +197,12 @@ Build names centrally in one local value and reuse it:
 `"${var.client}-${var.repo_short}-${var.project}-${var.region_code}-rg-${var.env}${format("%02d", var.deployment_index)}"`
 
 This keeps naming deterministic and auditable across all modules.
+
+## Profile
+
+VISHNU KIRAN M
+End-to-End AI, Cloud, Big Data, IoT & Embedded Solution Designer
+
+I design and deliver end-to-end AI solutions across the full lifecycle, from strategy and architecture to deployment, optimization, and measurable business outcomes. I am an expert in IoT solution design with embedded components, building integrated systems that connect edge devices, cloud platforms, and data/AI pipelines for scalable, production-grade enterprise solutions.
+
+ViKi-Pedia

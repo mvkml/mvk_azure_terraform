@@ -106,3 +106,12 @@ Suggested validation intent:
 ---
 
 If your organization already has landing zone abbreviations, align `workload`, `env`, and `region` values to that central standard.
+
+## Profile
+
+VISHNU KIRAN M
+End-to-End AI, Cloud, Big Data, IoT & Embedded Solution Designer
+
+I design and deliver end-to-end AI solutions across the full lifecycle, from strategy and architecture to deployment, optimization, and measurable business outcomes. I am an expert in IoT solution design with embedded components, building integrated systems that connect edge devices, cloud platforms, and data/AI pipelines for scalable, production-grade enterprise solutions.
+
+ViKi-Pedia
