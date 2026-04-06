@@ -1,0 +1,26 @@
+client_id       = "<service-principal-client-id>"
+client_secret   = "<service-principal-client-secret>"
+tenant_id       = "<azure-tenant-id>"
+subscription_id = "<azure-subscription-id>"
+
+project_name = "mcp-ai"
+location     = "Central US"
+env_names    = ["dev", "qa", "uat", "prod"]
+
+managedby    = "terraform"
+
+# cin central india
+# usw west us
+# westeurope west europe
+# eastus2 east us 2
+# centralus central us
+# southcentralus south central us
+location_id            = "cus"
+environment            = "qa"
+client_name            = "etna"
+repository_short_name  = "ubcliams"
+resource_type          = "rg"
+environment_code       = "qa01"
+
+# etna-ubcliams-mcp-ai-cus-rg-qa01
+# <client>-<repository-short-name>-<project-name>-<region-code>-<resource-type>-<environment/deployment>
