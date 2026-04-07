@@ -1,199 +1,154 @@
-# Terraform RG Multi-Environment Project
+# Azure Terraform Multi-Environment Implementation
 
-This repository provisions Azure Resource Groups for multiple environments using a reusable Terraform module and environment-specific Terraform roots.
+## Profile
 
-## What This Project Creates
+### VISHNU KIRAN M
+End-to-End AI, Cloud, Big Data, IoT & Embedded Solution Designer
 
-- One Azure Resource Group per environment (`dev`, `qa`, `uat`, `prod`)
-- Resource Group names based on a naming convention:
-	- `<client>-<repository-short-name>-<project-name>-<region-code>-<resource-type>-<environment-code>`
-- Common tags (`project`, `environment`, `managedBy`) on the resource group
+I design and deliver end-to-end AI solutions across the full lifecycle, from strategy and architecture to deployment, optimization, and measurable business outcomes. I am an expert in IoT solution design with embedded components, building integrated systems that connect edge devices, cloud platforms, and data/AI pipelines for scalable, production-grade enterprise solutions.
 
-Example generated name:
+ViKi-Pedia
 
-- `etna-ubcliams-mcp-ai-cus-rg-dev01`
+## 1) What This Project Does
 
-## Current Project Structure
+This repository provisions Azure infrastructure using Terraform with environment separation.
 
-```text
-003_terraform-rg-multi-env/
-|-- 001_execution_steps.md
-|-- 002_project.md
-|-- 003_about_project_structure.md
-|-- 004_resource_group_name.md
-|-- .gitignore
-|-- AzuriteConfig
-|-- Readme.md
-|-- modules/
-|   `-- resource_group/
-|       |-- main.tf
-|       |-- variables.tf
-|       `-- outputs.tf
-`-- environments/
-		|-- dev/
-		|-- qa/
-		|-- uat/
-		`-- prod/
-```
+- Environments: `dev`, `qa`, `uat`, `prod`
+- Shared reusable module: Resource Group module
+- Environment-specific extension: Storage Account module in `dev`
+- Naming strategy: deterministic, convention-based resource naming
 
-## File-By-File Description
+This design demonstrates how to scale infrastructure safely across environments while keeping common logic reusable.
 
-### Root Documentation Files
+## 2) High-Level Architecture
 
-| File | Description |
-|------|-------------|
-| `001_execution_steps.md` | Step-by-step Terraform lifecycle commands (`init`, `plan`, `apply`, `destroy`) and execution order. |
-| `002_project.md` | Short high-level sketch of the intended project structure. |
-| `003_about_project_structure.md` | Beginner-friendly explanation of module-based multi-environment structure and flow. |
-| `004_resource_group_name.md` | Detailed explanation of the resource group naming convention and segment meanings. |
-| `.gitignore` | Prevents committing Terraform-generated files and sensitive `.tfvars` values. |
-| `Readme.md` | Main project entry document (this file). |
-| `AzuriteConfig` | Local tool/config metadata file; not part of Terraform deployment logic. |
+- Each environment folder is an independent Terraform root module.
+- All environments consume `modules/resource_group` to create a Resource Group.
+- `dev` additionally calls a nested storage module (`environments/dev/mcp_resources/storageaccount`) to create one or more storage accounts.
 
-### Reusable Module: `modules/resource_group/`
+Flow:
 
-| File | Description |
-|------|-------------|
-| `modules/resource_group/main.tf` | Creates one Azure Resource Group using `azurerm_resource_group`. |
-| `modules/resource_group/variables.tf` | Declares module inputs: `rg_name`, `location`, `tags`. |
-| `modules/resource_group/outputs.tf` | Exposes module outputs: resource group name and ID. |
+1. Load provider + variables for the selected environment.
+2. Build naming/tag locals.
+3. Create resource group through shared module.
+4. (Dev only) Transform storage account list to map, then create storage accounts with `for_each`.
+5. Expose outputs.
 
-### Environment Folders
+## 3) Repository Structure
 
-Each environment folder under `environments/` is a separate Terraform root. The same file pattern exists in all four folders (`dev`, `qa`, `uat`, `prod`).
+- `modules/resource_group/`
+- `environments/dev/`
+- `environments/qa/`
+- `environments/uat/`
+- `environments/prod/`
 
-| File Pattern | Description |
-|------|-------------|
-| `environments/<env>/main.tf` | Builds `local.rg_name` using naming inputs and calls `../../modules/resource_group`. |
-| `environments/<env>/provider.tf` | Configures Azure provider (`azurerm` version `4.1.0`) and authentication variables. |
-| `environments/<env>/variables.tf` | Declares all input variables (credentials, naming parts, location, tags, environment metadata). |
-| `environments/<env>/terraform.tfvars` | Contains environment-specific values such as `environment` and `environment_code`. |
-| `environments/<env>/terraform.tfvars.example` | Sanitized template for onboarding; copy values into local `terraform.tfvars` and fill secrets safely. |
-| `environments/<env>/outputs.tf` | Returns resource group name and ID from the module. |
-| `environments/<env>/.terraform.lock.hcl` | Provider dependency lock file generated by `terraform init`. |
-| `environments/<env>/terraform.tfstate` | Terraform state file (tracks deployed resources). |
-| `environments/<env>/terraform.tfstate.backup` | Backup copy of Terraform state. |
-| `environments/<env>/.terraform/` | Generated provider/plugin/module cache folder. |
+Important `dev` files:
 
-### Environment Value Differences (Important)
+- `main.tf`: wires Resource Group module and Storage Account module
+- `provider.tf`: AzureRM provider (`hashicorp/azurerm`, pinned to `4.1.0`)
+- `variables.tf`: root variables (credentials, naming, tagging, env)
+- `sa.variables.tf`: storage account variable schema (list input)
+- `sa.auto.tfvars`: storage account values auto-loaded by Terraform
+- `terraform.tfvars`: environment values (credentials + naming parameters)
 
-The main difference across `terraform.tfvars` files is environment identity:
+## 4) Core Implementation Details
 
-- `dev`: `environment = "dev"`, `environment_code = "dev01"`
-- `qa`: `environment = "qa"`, `environment_code = "qa01"`
-- `uat`: `environment = "uat"`, `environment_code = "uat01"`
-- `prod`: `environment = "prod"`, `environment_code = "p01"`
+### 4.1 Shared Resource Group Module
 
-All environments currently use the same naming parts for client/project/repository/location code and Azure region.
+`modules/resource_group` is reusable and environment-agnostic.
 
-## How Deployment Works
+Inputs:
 
-1. Terraform reads values from `terraform.tfvars` in the selected environment folder.
-2. `main.tf` in that folder builds the resource group name using locals.
-3. That `main.tf` calls the reusable module from `modules/resource_group`.
-4. Module creates the Azure Resource Group.
-5. Outputs expose resource group name and ID.
+- `rg_name`
+- `location`
+- `tags`
 
-## Run Commands (From Environment Folder)
+Outputs:
 
-Example for `dev`:
+- `resource_group_name`
+- `resource_group_id`
 
-```bash
-cd environments/dev
+### 4.2 Environment Naming Convention
+
+Resource Group name is assembled in each environment using locals:
+
+`<client_name>-<repository_short_name>-<project_name>-<location_id>-<resource_type>-<environment_code>`
+
+Example:
+
+`etna-ubcliams-mcp-ai-cus-rg-dev01`
+
+This supports predictable naming across subscriptions and deployment stages.
+
+### 4.3 Tagging Strategy
+
+Common tags are generated once in locals and applied consistently:
+
+- `project`
+- `environment`
+- `managedBy`
+
+### 4.4 Dev Storage Account Design
+
+The storage module expects a map for `for_each`, but the root variable is a list.
+
+Transformation used in `environments/dev/main.tf`:
+
+`storage_accounts = { for sa in var.storage_accounts : sa.name => sa }`
+
+Why this is good:
+
+- Stable keys for `for_each`
+- Clear identity per storage account
+- Supports creating N storage accounts from one input list
+
+Important rule:
+
+- `name` must be unique per entry, otherwise Terraform will fail with duplicate map key errors.
+
+## 5) Environment Behavior Matrix
+
+- `dev`: Resource Group + Storage Accounts
+- `qa`: Resource Group
+- `uat`: Resource Group
+- `prod`: Resource Group
+
+This allows feature rollout in `dev` first before promoting additional resources to higher environments.
+
+## 6) How To Run
+
+From any environment folder (example: `environments/dev`):
+
+```powershell
 terraform init
 terraform validate
-terraform plan -var-file="terraform.tfvars"
-terraform apply -var-file="terraform.tfvars" -auto-approve
+terraform plan
 ```
 
-Cleanup:
+For `dev`, because `sa.auto.tfvars` is used, `terraform plan` can run without explicit `-var-file` for storage inputs.
 
-```bash
-terraform destroy -var-file="terraform.tfvars" -auto-approve
-```
+## 7) Showcase Talking Points For Clients
 
-Repeat the same inside `environments/qa`, `environments/uat`, and `environments/prod`.
+Use these points in your Git repository demo:
 
-## Security And Repository Hygiene
+- Multi-environment design with isolated roots (`dev/qa/uat/prod`)
+- Reusability through shared Terraform modules
+- Standardized naming and tagging for governance
+- Progressive delivery pattern (`dev` has additional module integration)
+- Data-driven resource creation using `for_each` + object schema
+- Provider version pinning for reproducibility
 
-- Do not store real secrets in `terraform.tfvars`.
-- Do not commit `terraform.tfstate`, `terraform.tfstate.backup`, or `.terraform/`.
-- Keep credentials in secure secret storage or CI/CD secret variables.
-- Add/update `.gitignore` to exclude generated Terraform artifacts.
+## 8) Production Readiness Notes
 
-How to onboard safely:
+Before public sharing or client handoff:
 
-1. Copy `terraform.tfvars.example` to `terraform.tfvars` inside the target environment folder.
-2. Fill real credentials only in your local machine or secure pipeline variables.
-3. Do not commit the generated `terraform.tfvars`.
+1. Do not commit real credentials in `.tfvars` files.
+2. Keep only sample placeholders in `terraform.tfvars.example`.
+3. Ensure Terraform state files are excluded from Git (already handled in `.gitignore`).
+4. Consider remote backend (Azure Storage) for team-safe state management and locking.
 
-Recommended ignore entries:
+## 9) Suggested Next Enhancement
 
-```gitignore
-**/.terraform/*
-**/.terraform.lock.hcl
-**/terraform.tfstate
-**/terraform.tfstate.backup
-**/*.tfvars
-```
-
-Note: If `*.tfvars` is required for sample learning content, keep only sanitized sample files in source control.
-
-## Publish-Ready Project Summary
-
-This project demonstrates a practical Terraform design for Azure with clear separation between reusable modules and environment-specific configurations.
-
-- Uses a reusable module in `modules/resource_group` to avoid code duplication.
-- Maintains isolated environment roots in `environments/dev`, `environments/qa`, `environments/uat`, and `environments/prod`.
-- Implements a structured naming convention for predictable and auditable Azure resource names.
-- Includes onboarding-friendly documentation and sanitized variable templates.
-- Follows safer repository hygiene by ignoring generated state, provider cache, and local secret files.
-
-This makes the repository suitable for learning, collaboration, and portfolio sharing after secret rotation is completed.
-
-## Secret Rotation Checklist
-
-Use this checklist before sharing the repository publicly or with external reviewers.
-
-1. Rotate the current service principal secret in Azure.
-2. Create a new secret with minimum required privileges.
-3. Update local `terraform.tfvars` files with the new secret.
-4. Move credential values to a secure source (pipeline secrets, key vault, or local secure store).
-5. Confirm `.gitignore` is active and excludes all `*.tfvars` and state files.
-6. Verify no secrets remain in tracked files:
-	- Search for `client_secret`, `subscription_id`, `tenant_id`, `client_id`.
-7. If credentials were ever pushed to remote git, rotate all exposed values immediately.
-8. Re-run plan/apply using rotated credentials to validate access.
-
-## Pre-Push Validation Checklist
-
-Run these checks inside each environment folder before pushing changes.
-
-1. Initialize and sync providers:
-
-```bash
-terraform init
-```
-
-2. Validate Terraform configuration syntax and structure:
-
-```bash
-terraform validate
-```
-
-3. Review planned changes (no unexpected create/update/delete):
-
-```bash
-terraform plan -var-file="terraform.tfvars"
-```
-
-4. Optional: apply for test environment confirmation:
-
-```bash
-terraform apply -var-file="terraform.tfvars" -auto-approve
-```
-
-5. Confirm outputs are present and naming convention is correct.
-6. Confirm no generated files are staged (`terraform.tfstate`, `.terraform/`, local `.tfvars`).
-7. Push only source files and sanitized documentation/templates.
-
+- Promote storage account module usage to `qa/uat/prod` when validated in `dev`.
+- Extract storage module from `environments/dev/mcp_resources/storageaccount` into top-level `modules/` for full cross-environment reuse.
+- Add CI checks (`terraform fmt -check`, `terraform validate`, `terraform plan`) for PR quality gates.

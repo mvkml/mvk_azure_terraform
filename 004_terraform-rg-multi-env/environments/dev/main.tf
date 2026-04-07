@@ -30,14 +30,17 @@ module "resource_group" {
   tags     = local.common_tags
 }
 
+ 
+module "storageaccount" {
+  source = "./mcp_resources/storageaccount"
 
-module "storage_account" {
-  source = "../../modules/storage_account"
+  resource_group_name = module.resource_group.resource_group_name
+  location            = var.location
+  common_tags         = local.common_tags
 
-  storage_account_name      = local.storage_account_name
-  resource_group_name       = module.resource_group.resource_group_name
-  location                  = var.location
-  account_tier              = var.storage_account_tier
-  account_replication_type  = var.storage_account_replication_type
-  tags                      = local.common_tags
+  storage_accounts = { for sa in var.storage_accounts : sa.name => sa }
 }
+
+
+
+
