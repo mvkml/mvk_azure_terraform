@@ -1,0 +1,10 @@
+
+module "storageaccount" {
+  source = "./mcp_resources/storageaccount"
+
+  resource_group_name = module.resource_group.resource_group_name
+  location            = var.location
+  common_tags         = local.common_tags
+
+  storage_accounts = { for sa in var.storage_accounts : sa.name => sa }
+}
