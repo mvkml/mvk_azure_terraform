@@ -1,0 +1,103 @@
+
+
+variable "storage_accounts" {
+  description = "Map of storage account configurations"
+
+  type = map(object({
+    name                     = string
+    account_tier             = optional(string, "Standard")
+    account_replication_type = optional(string, "LRS")
+    account_kind             = optional(string, "StorageV2")
+    access_tier              = optional(string, "Hot")
+    containers                = optional(list(object({
+      name                  = string
+      container_access_type = optional(string, "private")
+      metadata              = optional(map(string), {})
+    })), [])
+    is_active                = optional(bool, true) # This flag can be used to enable or disable the creation of specific storage accounts without modifying the code.
+  
+  }))
+}
+
+
+##########################################################
+DATA
+##########################################################
+
+
+storage_accounts = {
+  sa321 = {
+    name                     = "ubclaims321stg001"
+    account_tier             = "Standard"
+    account_replication_type = "LRS"
+    account_kind             = "StorageV2"
+    access_tier              = "Hot"
+    containers = [
+      {
+        name                  = "mcpubcontainer"
+        container_access_type = "private"
+        metadata = {
+          project = "mcp"
+          module  = "ubclaims"
+        }
+      },
+      {
+        name                  = "logs"
+        container_access_type = "private"
+        metadata = {
+          purpose = "applicationlogs"
+        }
+      }
+    ]
+    is_active = true
+  }
+
+  sa322 = {
+    name                     = "ubclaims322stg001"
+    account_tier             = "Standard"
+    account_replication_type = "GRS"
+    account_kind             = "StorageV2"
+    access_tier              = "Hot"
+    containers = [
+      {
+        name                  = "mcpubcontainer"
+        container_access_type = "private"
+      }
+    ]
+    is_active = true
+  }
+
+  sa323 = {
+    name                     = "ubclaims323stg001"
+    account_tier             = "Standard"
+    account_replication_type = "LRS"
+    account_kind             = "StorageV2"
+    access_tier              = "Cool"
+    containers = [
+      {
+        name                  = "mcpubcontainer"
+        container_access_type = "private"
+      },
+      {
+        name                  = "archive"
+        container_access_type = "private"
+        metadata = {
+          retention = "longterm"
+        }
+      }
+    ]
+    is_active = true
+  }
+
+  sa324 = {
+    name                     = "ubclaims324stg001"
+    account_tier             = "Standard"
+    account_replication_type = "LRS"
+    account_kind             = "StorageV2"
+    access_tier              = "Hot"
+    containers               = []
+    is_active                = false
+  }
+}
+
+
