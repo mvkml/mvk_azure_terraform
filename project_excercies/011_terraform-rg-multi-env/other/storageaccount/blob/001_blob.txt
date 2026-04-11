@@ -1,0 +1,65 @@
+storage_accounts = [
+  {
+    name                     = "saetnaubcliamscus27"
+    account_tier             = "Standard"
+    account_replication_type = "LRS"
+    account_kind             = "StorageV2"
+    access_tier              = "Hot"
+    description                = "Storage account for development and testing purposes"
+    is_active                 = true
+    containers = [
+      {
+        name = "saetnaubcliamscus27"
+        container_access_type = "private"
+        description             = "Container for development and testing purposes"
+        metadata = {
+          environment = "dev"
+          project     = "mcp-ai"
+        }
+        is_active = true
+      },
+      {
+        name = "saetnahcfacliamscus27"
+        container_access_type = "blob"
+        description             = "Container for development and testing purposes"
+        metadata = {
+          environment = "dev"
+          project     = "mcp-ai"
+        }
+        is_active = false
+      }
+    ]
+  },
+  {
+    name                     = "saetnahcfacliamscus22"
+    account_tier             = "Standard"
+    account_replication_type = "LRS"
+    account_kind             = "StorageV2"
+    access_tier              = "Hot"
+    description                = "Storage account for development and testing purposes"
+    is_active   = false
+    containers = [
+      {
+        name = "saetnahcfacliamscus22"
+        container_access_type = "private"
+        description             = "Container for development and testing purposes"
+        metadata = {
+          environment = "dev"
+          project     = "mcp-ai"
+        }
+        is_active = true
+      },
+      {
+        name = "saetnahcfacliamscus22"
+        container_access_type = "blob"
+        description             = "Container for development and testing purposes"
+        metadata = {
+          environment = "dev"
+          project     = "mcp-ai"
+        }
+        is_active = true
+      }
+    ]
+    
+  }
+]
