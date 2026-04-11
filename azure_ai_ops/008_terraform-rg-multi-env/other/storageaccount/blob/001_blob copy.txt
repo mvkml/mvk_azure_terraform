@@ -1,0 +1,17 @@
+locals {
+  active_blob_group = flatten([
+    for sa in var.storage_accounts : [
+      for container in sa.containers : [
+        for blob in container.blobs : {
+          storage_account_name = sa.name
+          container_name       = container.name
+          blob_name            = blob.name
+          blob_type            = blob.type
+          blob_source          = blob.source   # example: documents/ai_blobs
+          blob_pattern         = blob.pattern  # example: *.*
+          blob_items           = fileset("${path.root}/${blob.source}", blob.pattern)
+        } if blob.is_active
+      ] if container.is_active
+    ] if sa.is_active
+  ])
+}
