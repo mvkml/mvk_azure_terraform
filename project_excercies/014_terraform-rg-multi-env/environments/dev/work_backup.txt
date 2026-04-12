@@ -1,0 +1,42 @@
+
+module "storageaccount" {
+  source = "./mcp_resources/storageaccount"
+
+  resource_group_name = module.resource_group.resource_group_name
+  location            = var.location
+  common_tags         = local.common_tags
+
+  storage_accounts = { for sa in var.storage_accounts : sa.name => sa }
+}
+
+
+
+############################################
+# Azure AI Search Module
+############################################
+module "ai_search" {
+  source = "./mcp_resources/ai_search"
+
+  resource_group_name = module.resource_group.resource_group_name
+  location            = var.location
+
+  ai_search_services = {for k, v in var.ai_search_services : k => v if v.is_active} # This will filter the AI Search services based on the is_active flag in the variable definition, allowing you to easily enable or disable specific services without modifying the code.
+  
+  ai_search_tags        = var.ai_search_tags
+  depends_on = [module.resource_group] #optionally add depends_on to ensure the resource group is created before the AI Search services
+}
+
+
+
+
+
+
+variable "containers" {
+  description = "List of blob containers to create"
+
+  type = list(object({
+    name                  = string
+    container_access_type = optional(string, "private")
+    metadata              = optional(map(string), {})
+  }))
+}
