@@ -1,0 +1,14 @@
+# Terraform generated directories and files
+**/.terraform/*
+**/.terraform.lock.hcl
+**/terraform.tfstate
+**/terraform.tfstate.*
+
+# Sensitive variable values
+**/*.tfvars
+
+# Keep sanitized examples
+!**/*.tfvars.example
+
+# Local metadata
+AzuriteConfig

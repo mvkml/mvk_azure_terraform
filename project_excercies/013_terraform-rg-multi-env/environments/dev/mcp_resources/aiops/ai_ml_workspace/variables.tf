@@ -1,0 +1,28 @@
+variable tags {
+  type        = map(string)
+  default     = {}
+  description = "description"
+}
+
+
+variable resource_group_name {
+  type        = string
+  default     = ""
+  description = "description"
+}
+
+variable  location {
+  type        = string
+  default     = ""
+  description = "description"
+}
+
+variable "ml_workspace" {
+    name         = optional(string, "mlw-aihub")
+    location     = optional(string, "eastus")
+    resource_group_name = optional(string, "")
+    application_insights_id = optional(string, "")
+    key_vault_id            = optional(string, "")
+    storage_account_id      = optional(string, "")
+    container_registry_id   = optional(string, "")
+}
