@@ -1,0 +1,53 @@
+
+
+resource "azurerm_cosmosdb_account" "az_cd_account" {
+  name = var.az_cd.name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  offer_type          = var.az_cd.offer_type
+  kind               = var.az_cd.kind
+  enable_automatic_failover = var.az_cd.enable_automatic_failover
+  enable_multiple_write_locations = var.az_cd.enable_multiple_write_locations
+  local_authentication_disabled = var.az_cd.local_authentication_disabled 
+  public_network_access_enabled = var.az_cd.public_network_access_enabled
+  minimal_tls_version = var.az_cd.minimal_tls_version
+  consistency_policy {
+    consistency_level = var.az_cd.consistency_policy.consistency_level
+  }
+  geo_location {
+    location          = var.az_cd.geo_location.location
+    failover_priority = var.az_cd.geo_location.failover_priority
+    zone_redundant    = var.az_cd.geo_location.zone_redundant
+  }
+  secondary_geo_location {
+    location          = var.az_cd.secondary_geo_location.location
+    failover_priority = var.az_cd.secondary_geo_location.failover_priority
+    zone_redundant    = var.az_cd.secondary_geo_location.zone_redundant
+  }
+  backup {
+    type = var.az_cd.backup.type
+    tier = var.az_cd.backup.tier
+  }
+  tags = var.tags_az_cd
+}
+
+
+
+resource "azurerm_cosmosdb_sql_database" "az_cd_sqldb" {
+  name                = var.name
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  account_name        = azurerm_cosmosdb_account.az_cd_account.name
+  tags                = var.tags_az_cd_sql_db
+}
+
+resource "azurerm_cosmosdb_sql_container" "az_cd_sql_container" {
+  name                = var.name
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  account_name        = azurerm_cosmosdb_account.az_cd_account.name
+  database_name       = azurerm_cosmosdb_sql_database.az_cd_sqldb.name
+  partition_key_paths = var.az_cd_sql_container.partition_key_paths
+  tags                = var.tags_az_cd_sql_container
+}
+

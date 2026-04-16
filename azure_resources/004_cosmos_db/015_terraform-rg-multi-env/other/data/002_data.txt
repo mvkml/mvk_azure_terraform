@@ -1,0 +1,10 @@
+variable "use_existing_workspace" {
+  type    = bool
+  default = true
+}
+
+variable "workspace_name" {
+  type = string
+}
+
+

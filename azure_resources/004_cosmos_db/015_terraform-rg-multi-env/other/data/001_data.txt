@@ -1,0 +1,15 @@
+data "azurerm_log_analytics_workspace" "ai_hub_logs" {
+  name                = "law-ai-hub-dev-122251"
+  resource_group_name = var.resource_group_name
+}
+
+
+module "m_ai_hub_application_insights" {
+  source = "../../../mcp_resources/app_insight"
+
+  resource_group_name  = var.resource_group_name
+  location             = var.location
+  application_insights = local.l_application_insights
+  workspace_id         = data.azurerm_log_analytics_workspace.ai_hub_logs.id
+  tags                 = local.l_tags_application_insights
+}
