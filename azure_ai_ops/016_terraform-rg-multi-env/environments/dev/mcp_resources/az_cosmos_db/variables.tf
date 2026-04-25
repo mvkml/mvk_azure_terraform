@@ -1,0 +1,187 @@
+variable tags {
+  type        = map(string)
+  default     = {}
+  description = "description"
+}
+
+
+variable resource_group_name {
+  type        = string
+  default     = ""
+  description = "description"
+}
+
+variable  location {
+  type        = string
+  default     = ""
+  description = "description"
+}
+
+
+variable tags_az_cd {
+  type        = map(string)
+  default     = {}
+  description = "description"
+}
+
+# variable az_cd {
+#     type = object({Id   = optional(number, 0)
+#     name              = optional(string, "")
+#     location           = optional(string, "")
+#     # what is offer type and sku name for cosmos db
+#     # offer type is the type of the Cosmos DB account, which determines the features and capabilities available. The most common offer types are "Standard" and "Premium". The "Standard" offer type provides a cost-effective option for most workloads, while the "Premium" offer type offers additional features such as higher throughput and availability.
+#     # Standard → software security  ( Stock Keeping Unit SKU)
+#     # Premium → hardware security (HSM)
+#     offer_type        = optional(string, "Standard")
+#     # what is kind for cosmos db
+#     # The "kind" property in Azure Cosmos DB specifies the type of database account being created. It determines the API and features that will be available for that account. The most common "kind" values are "GlobalDocumentDB" for SQL API accounts, "MongoDB" for MongoDB API accounts, "Cassandra" for Cassandra API accounts, and "Gremlin" for Gremlin API accounts. Each "kind" corresponds to a specific API and set of capabilities within Azure Cosmos DB.
+#     # The "GlobalDocumentDB" kind is the default and is used for SQL API accounts, which support document-oriented data models. The "MongoDB" kind is used for accounts that are compatible with MongoDB APIs, allowing you to use MongoDB drivers and tools. The "Cassandra" kind is for accounts that support Cassandra APIs, enabling you to use Cassandra query language and tools. The "Gremlin" kind is for accounts that support graph databases using the Gremlin query language. Choosing the appropriate "kind" is essential for ensuring that your Cosmos DB account meets the requirements of your application and allows you to leverage the desired features and capabilities.
+#     kind              = optional(string, "GlobalDocumentDB")
+
+#     # enable automatic failover for the Cosmos DB account. When enabled, this feature allows the Cosmos DB account to automatically failover to a secondary region in the event of a regional outage or failure. This helps to ensure high availability and minimize downtime for applications that rely on the Cosmos DB account. By enabling automatic failover, you can improve the resilience and reliability of your Cosmos DB deployment, providing a seamless experience for users even during unexpected disruptions.
+#     enable_automatic_failover = optional(bool, false)
+
+#     # Portal choice: Multi-region Writes = Disable
+#     enable_multiple_write_locations = optional(bool, false)
+
+#     # Portal choice: Key-based Authentication = Enable
+#     local_authentication_disabled = optional(bool, false)
+
+#     public_network_access_enabled = optional(bool, true)
+
+#     minimal_tls_version = optional(string, "TLS1_2")
+
+#     consistency_policy = optional(object({
+#         consistency_level       = optional(string, "Session")
+#     }), {
+#         consistency_level       = "Session"
+#     })
+
+#    geo_location = optional(object({
+#     location          = optional(string, "Central US")
+#     failover_priority = optional(number, 0)
+#     zone_redundant    = optional(bool, false)
+#    }), {
+#     location          = "Central US"
+#     failover_priority = 0
+#     zone_redundant    = false
+#    })
+
+#   secondary_geo_location = optional(object({
+#     location          = optional(string, "East US")
+#     failover_priority = optional(number, 1)
+#     zone_redundant    = optional(bool, false)
+#    }), {
+#     location          = "East US"
+#     failover_priority = 1
+#     zone_redundant    = false
+#    })
+
+
+#   backup = optional(object({
+#     type = optional(string, "Continuous")
+#     tier = optional(string, "Continuous7Days")
+#   })) 
+
+#     description         = optional(string, "")
+#     is_active           = optional(bool, true)
+# })
+# }
+
+
+ 
+
+# variable "az_cd_sql_db" {
+
+#     type = object({
+#     Id   = optional(number, 0)
+#     name              = optional(string, "")
+#     resource_group_name = optional(string, "")
+#     location           = optional(string, "")
+#     description         = optional(string, "")
+#     is_active           = optional(bool, true)})
+
+# }
+
+
+
+# variable "tags_az_cd_sql_container" {
+#   type        = map(string)
+#   default     = {}
+#   description = "description"
+# }
+
+
+# variable  "az_cd_sql_container" {
+#   type = object({
+#     Id   = optional(number, 0)
+#     name              = optional(string, "")
+#     resource_group_name = optional(string, "")
+#     account_name       = optional(string, "")
+#     database_name      = optional(string, "")
+#     # partition key paths ["/Id"] is the default value for partition key paths in Azure Cosmos DB SQL API. The partition key is used to distribute data across multiple partitions for scalability and performance. By default, the partition key is set to "/Id", which means that the "Id" property of the documents will be used as the partition key. This allows for efficient querying and data distribution based on the unique identifier of each document. However, you can customize the partition key paths based on your specific data model and access patterns to optimize performance and scalability for your Cosmos DB account.
+#     partition_key_paths = optional(list(string), ["/Id"])
+
+#     throughput = optional(number, 400)
+
+#     location           = optional(string, "")
+#     description         = optional(string, "")
+#     is_active           = optional(bool, true)
+#     })
+# }
+
+# variable  "az_cd_indexing_policy_sql_container" {
+#   type = object({
+#     indexing_mode = optional(string, "consistent")
+        
+#     included_path = optional(object({
+#         path = optional(string, "/*")
+#     }), {
+#         path = "/*"
+#     })
+
+#     excluded_path = optional(object({
+#         path = optional(string, "/\"_etag\"/?")
+#     }), {
+#         path = "/\"_etag\"/?"
+#     })
+
+#   })
+# }
+
+
+ 
+variable app_context {
+  type        = object({
+    project_name           = optional(string, "mcp-ai")
+    location_id            = optional(string, "")
+    location               = optional(string, "Central US")
+    secondary_location       = optional(string, "West US")
+    environment            = optional(string, "dev")
+    client_name            = optional(string, "etna")
+    repository_short_name  = optional(string, "ubcliams")
+    resource_type          = optional(string, "")
+    environment_code       = optional(string, "")
+    environment_version    = optional(string, "")
+    managed_by                 = optional(string, "VISHNU KIRAN M")
+    is_active                = optional(bool, true)
+    description               = optional(string, "The context or purpose of the application, used in resource naming conventions")
+    
+  })
+  default     = {
+    project_name           = ""
+    location_id            = ""
+    location                = ""
+    secondary_location      = ""
+    environment            = "dev"
+    client_name            = ""
+    repository_short_name  = ""
+    resource_type          = ""
+    environment_code       = ""
+    environment_version    = ""
+    managed_by                 = "VISHNU KIRAN M"
+    is_active              = true
+    description           = "The context or purpose of the application, used in resource naming conventions"
+  }
+  description = "The context or purpose of the application, used in resource naming conventions"
+}

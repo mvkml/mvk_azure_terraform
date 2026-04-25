@@ -1,0 +1,83 @@
+variable tags {
+  type        = map(string)
+  default     = {}
+  description = "description"
+}
+
+
+variable resource_group_name {
+  type        = string
+  default     = ""
+  description = "description"
+}
+
+variable  location {
+  type        = string
+  default     = ""
+  description = "description"
+}
+
+variable tenant_id {
+  type        = string
+  default     = ""
+  description = "description"
+} 
+
+variable object_id {
+  type        = string
+  default     = ""
+  description = "description"
+}
+
+
+variable "az_keyvault" {
+    type = object({Id                = optional(number, 0)
+    name              = optional(string, "")
+    location           = optional(string, "")
+    tenant_id         = optional(string, "")
+    object_id         = optional(string, "")
+    sku_name          = optional(string, "standard")
+    soft_delete_enabled = optional(bool, true)
+    soft_delete_retention_days = optional(number, 90)
+    purge_protection_enabled = optional(bool, false)
+    description         = optional(string, "")
+    is_active           = optional(bool, true)
+})
+}
+
+
+
+variable app_context {
+  type        = object({
+    project_name           = optional(string, "mcp-ai")
+    location_id            = optional(string, "")
+    location               = optional(string, "Central US")
+    secondary_location       = optional(string, "West US")
+    environment            = optional(string, "dev")
+    client_name            = optional(string, "etna")
+    repository_short_name  = optional(string, "ubcliams")
+    resource_type          = optional(string, "")
+    environment_code       = optional(string, "")
+    environment_version    = optional(string, "")
+    managed_by                 = optional(string, "VISHNU KIRAN M")
+    is_active                = optional(bool, true)
+    description               = optional(string, "The context or purpose of the application, used in resource naming conventions")
+    
+  })
+  default     = {
+    project_name           = ""
+    location_id            = ""
+    location                = ""
+    secondary_location      = ""
+    environment            = "dev"
+    client_name            = ""
+    repository_short_name  = ""
+    resource_type          = ""
+    environment_code       = ""
+    environment_version    = ""
+    managed_by                 = "VISHNU KIRAN M"
+    is_active              = true
+    description           = "The context or purpose of the application, used in resource naming conventions"
+  }
+  description = "The context or purpose of the application, used in resource naming conventions"
+}
